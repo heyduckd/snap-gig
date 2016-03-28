@@ -8,9 +8,22 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const jwtAuth = require('jsonwebtoken');
 
-app.use(bodyParser.json());
+// Routers
+let publicRouter = express.Router();
+let loginRouter = express.Router();
+
 
 mongoose.connect('mongodb://localhost/db');
+
+// Create User Router
+require('./routes/user-route')(publicRouter);
+
+// Login User
+require('./routes/login-route')(loginRouter);
+
+app.use(bodyParser.json());
+
+app.use('/public', publicRouter);
 
 app.listen(3000);
 console.log('Server Listening on Port 3000');

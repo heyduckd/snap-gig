@@ -1,0 +1,47 @@
+{
+  "name": "snap-gig",
+  "version": "1.0.0",
+  "description": "Snap Gig is a web app that allows users to post freelance gigs and sumbit entries to existing gigs. Winning submissions are selected by the gig creator. ",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freelance-web-app/snap-gig.git"
+  },
+  "keywords": [
+    "Authentication",
+    "Users",
+    "Node",
+    "Javascript",
+    "Freelance",
+    "MongoDB",
+    "Mongo",
+    "Data",
+    "Express"
+  ],
+  "author": "David Heyduck <heyduckd@gmail.com> (http://davidheyduck.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/freelance-web-app/snap-gig/issues"
+  },
+  "homepage": "https://github.com/freelance-web-app/snap-gig#readme",
+  "dependencies": {
+    "aws-sdk": "^2.2.47",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^5.7.0",
+    "mongoose": "^4.4.10"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "mocha": "^2.4.5"
+  }
+}

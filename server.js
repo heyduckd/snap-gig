@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express');
+const mongodb = require('mongodb');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -12,7 +13,7 @@ let loginRouter = express.Router();
 let apiRouter = express.Router();
 
 
-mongoose.connect('mongodb://localhost/db');
+mongoose.connect(process.env.MONGOLAB_URI);
 
 // Create User Router
 require('./routes/user-route')(publicRouter);
@@ -29,5 +30,6 @@ app.use('/public', publicRouter);
 app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
 
-app.listen(3000);
-console.log('Server Listening on Port 3000');
+app.listen(3000, () => {
+  console.log('Server started on 3000!');
+});

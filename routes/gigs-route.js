@@ -21,6 +21,7 @@ module.exports = (apiRouter) => {
   })
   .post((req, res) => {
     req.on('data', (data) => {
+      //push gig owner to gig owner field in gig schema!!!!
       req.body = JSON.parse(data)
       var newGig = new Gig(req.body)
       newGig.save((err, data) => {
@@ -43,11 +44,35 @@ module.exports = (apiRouter) => {
     })
   })
   .patch((req, res) => {
-    //edit gig posting if you are the gig manager
-  })
+  let userInfo = req.user._id;
+  Gig.findById(req.params.id, (err, gig) => {
+    if (err) throw err;
+    console.log('gig owner is: ' + gig);
+    console.log('user info is: ' + userInfo);
+    if (gig.owner === userInfo) {
+      gig.update(req.body, (err, data) => {
+        if (err) throw err;
+        console.log('gig successfully updated');
+      })
+    } else {
+      res.status(404).json({msg: 'You do not have permissions to patch this gig!'});
+    };
+  });
+})
   .delete((req, res) => {
+    let userInfo = req.user._id;
+    Gig.findById(req.params.id, (err, gig) => {
+      if (err) throw err;
+      if (gig.owner === userInfo) {
+        gig.remove((err, gig) => {
+          res.json({msg: 'gig removed!!'})
+        });
+      } else {
+        res.json({msg: 'you dont have permission to delete this user'});
+      };
+    });
     //delete gig posting if you are the gig manager
-  })
+  });
 
   apiRouter.route('/gigs/:id/submissions')
   .post((req, res) => {

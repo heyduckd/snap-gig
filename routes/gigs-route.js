@@ -11,9 +11,9 @@ const Gig = require(__dirname + '/../models/gigs-schema');
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
   .get((req, res) => {
-    Gig.find({}. (err, data) => {
+    Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
       if(err) throw err
-      res.status(200).json(data)
+      res.status(200).json(gigs)
       console.log('Showing all open gigs');
       res.end()
     })

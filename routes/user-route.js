@@ -12,10 +12,11 @@ module.exports = (publicRouter) => {
     .post((req, res) => {
       req.on('data', (data) => {
         req.body = JSON.parse(data);
-        console.log(req.body);
+        // console.log(req.body);
         let newUser = new User(req.body);
         newUser.save((err, user) => {
           if (err) {
+            console.log(err);
             res.status(404).json({msg: 'User coudn\'t be saved'});
             res.end();
           } else {

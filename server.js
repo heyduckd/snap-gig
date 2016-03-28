@@ -12,7 +12,7 @@ let loginRouter = express.Router();
 let apiRouter = express.Router();
 
 
-mongoose.connect('mongodb://localhost/db');
+mongoose.connect(process.env.MOGOLAB_URI);
 
 // Create User Router
 require('./routes/user-route')(publicRouter);
@@ -29,5 +29,6 @@ app.use('/public', publicRouter);
 app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
 
-app.listen(3000);
-console.log('Server Listening on Port 3000');
+app.listen(3000, () => {
+  console.log('Server started on 3000!');
+});

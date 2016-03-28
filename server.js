@@ -12,7 +12,7 @@ let loginRouter = express.Router();
 let apiRouter = express.Router();
 
 
-mongoose.connect(process.env.MOGOLAB_URI);
+mongoose.connect(process.env.MONGOLAB_URI);
 
 // Create User Router
 require('./routes/user-route')(publicRouter);

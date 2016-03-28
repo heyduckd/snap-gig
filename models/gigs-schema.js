@@ -9,8 +9,8 @@ let gigSchema = new mongoose.Schema ({
   deadline: Date,
   payment_range: Number,
   owner: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
-  submissions: [{type:mongoose.Schema.Types.ObjectId, ref: 'Submission'}]
-  winner: type: String, 
+  submissions: [{type:mongoose.Schema.Types.ObjectId, ref: 'Submission'}],
+  winner: String,
 });
 
 module.exports = mongoose.model('Gig', gigSchema)

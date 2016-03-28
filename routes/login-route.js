@@ -13,7 +13,7 @@ module.exports = (loginRouter) => {
     User.find({username: name}, (err, user) => {
       let valid = user[0].compareHash(password);
       if(!valid) {
-        return res.status(400).json(message: 'invalid login')
+        return res.status(400).json({message: 'invalid login'})
       }
 
       res.status(200).json({token: user[0].generateToken()})

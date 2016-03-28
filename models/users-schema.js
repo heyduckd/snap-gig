@@ -23,8 +23,9 @@ var userSchema = mongoose.Schema({
   }
 })
 
-userSchema.pre('save', function(next) => {
-  this.password = bcrypt.hashSync(this.password, bcrypt.getSaltSync(10))
+userSchema.pre('save', function(next){
+  console.log('THIS PASSWORD : ', this.password);
+  this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10))
   next()
 })
 

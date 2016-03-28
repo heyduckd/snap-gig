@@ -25,7 +25,7 @@
     "Data",
     "Express"
   ],
-  "author": "David Heyduck <heyduckd@gmail.com> (http://davidheyduck.com)",
+  "author": "David Heyduck, Luc Ho, Sam Gruse, Hugo Guerro",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/freelance-web-app/snap-gig/issues"

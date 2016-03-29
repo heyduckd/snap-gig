@@ -11,7 +11,6 @@ const Gig = require(__dirname + '/../models/gigs-schema');
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
   .get((req, res) => {
-    console.log('pooooooop' + req.user);
     Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
       if(err) throw err
       console.log('GIGGGS FOUND : ', gigs);

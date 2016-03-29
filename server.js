@@ -26,7 +26,7 @@ require('./routes/login-route')(loginRouter);
 require('./routes/gigs-route')(apiRouter);
 
 //admin routes
-require('./routes/admin-route')(adminRouter)  //possibly revise router
+require('./routes/admin-route')(adminRouter);
 
 app.use(bodyParser.json());
 

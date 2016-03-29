@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.use('/public', publicRouter);
 app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
-app.use('/admin' auth, adminRouter);
+app.use('/admin', auth, adminRouter);
 
 app.listen(3000, () => {
   console.log('Server started on 3000!');

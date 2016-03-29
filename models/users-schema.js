@@ -24,8 +24,8 @@ var userSchema = mongoose.Schema({
 })
 
 userSchema.pre('save', function(next){
-  console.log('THIS PASSWORD : ', this.password);
   this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10))
+  console.log('THIS PASSWORD : ', this.password);
   next()
 })
 
@@ -34,7 +34,7 @@ userSchema.methods.compareHash = function(password){
 }
 
 userSchema.methods.generateToken = function(){
-  return jwt.sign({ _id: this._id, email: this.email, occupation: this.occupation}, 'CHANGE ME')
+  return jwt.sign({ _id: this._id, email: this.email, occupation: this.occupation }, 'CHANGE ME')
 }
 
 var User = mongoose.model('User', userSchema)

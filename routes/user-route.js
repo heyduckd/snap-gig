@@ -29,20 +29,27 @@ module.exports = (publicRouter) => {
 
     publicRouter.route('/user/:id')
     .put((req, res) => {
+      let userInfo = req.user._id;
       req.on('data', (data) => {
         req.body = JSON.parse(data);
-        User.update({_id: req.params.id}, req.body, (err, user) => {
-          if (err) {
-            res.status(404).json({msg: 'User not found'});
+        if (req.params.id === userInfo) {
+          User.update({_id: req.params.id}, req.body, (err, user) => {
+            if (err) {
+              res.status(404).json({msg: 'User not found'});
+              res.end();
+            }
+            res.status(200);
+            res.json(user);
             res.end();
-          }
-          res.status(200);
-          res.json(user);
-          res.end();
-        });
+          });
+        } else {
+          res.status(404).json({msg: 'You do not have permissions to patch this user!'});
+        }
       });
     })
     .delete((req, res) => {
+      let userInfo = req.user._id
+      if (req.params.id === userInfo) {
       User.findById(req.params.id, (err, user) => {
         if (err) {
           res.status(404).json({msg: 'User not found'});
@@ -58,5 +65,8 @@ module.exports = (publicRouter) => {
           res.end();
         });
       });
+    } else {
+      res.status(404).json({msg: 'You do not have permissions to delete this user!'});
+    }
     });
   };

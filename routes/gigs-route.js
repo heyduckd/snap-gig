@@ -7,26 +7,33 @@ const fs = require('fs');
 const jwtAuth = require(__dirname + '/../lib/authentication');
 
 const Gig = require(__dirname + '/../models/gigs-schema');
-const Sub = require(__dirname + '/../models/submissions-schema');
+
+const User = require(__dirname + '/../models/users-schema');
 
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
   .get((req, res) => {
     Gig.find({}).populate('submissions').exec((err, gigs) => {
       if(err) throw err
-      console.log(gigs);
       res.status(200).json(gigs)
       res.end()
     })
   })
   .post((req, res) => {
     req.on('data', (data) => {
+      let userInfo = req.user._id;
       //push gig owner to gig owner field in gig schema!!!!
+      console.log('data is: ' + data);
+      console.log('req is: ' + req);
       req.body = JSON.parse(data)
       var newGig = new Gig(req.body)
-      newGig.save((err, data) => {
-        if(err) throw err
-        res.status(200)
+      console.log('req body is: ' + req.body);
+      newGig.save((err, gig) => {
+        if(err) throw err;
+        User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
+          console.log(gig._id + 'was pushed for user ' + userInfo);
+        });
+        res.status(200);
         console.log('Gig Added');
         res.end()
       })
@@ -71,7 +78,6 @@ module.exports = (apiRouter) => {
         res.json({msg: 'you dont have permission to delete this user'});
       };
     });
-    //delete gig posting if you are the gig manager
   });
 
   apiRouter.route('/gigs/:id/submissions')

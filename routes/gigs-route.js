@@ -7,15 +7,15 @@ const fs = require('fs');
 const jwtAuth = require(__dirname + '/../lib/authentication');
 
 const Gig = require(__dirname + '/../models/gigs-schema');
+const Sub = require(__dirname + '/../models/submissions-schema');
 
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
   .get((req, res) => {
-    Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
+    Gig.find({}).populate('submissions').exec((err, gigs) => {
       if(err) throw err
-      console.log('GIGGGS FOUND : ', gigs);
+      console.log(gigs);
       res.status(200).json(gigs)
-      console.log('Showing all open gigs');
       res.end()
     })
   })
@@ -77,5 +77,24 @@ module.exports = (apiRouter) => {
   apiRouter.route('/gigs/:id/submissions')
   .post((req, res) => {
     //creates new submission schema entry, pushed submission ID to submissions array for specific gig
+    req.on('data', (data) => {
+      req.body = JSON.parse(data);
+      let newSub = new Sub(req.body);
+      newSub.save((err, submission) => {
+        if (err) {
+          res.status(404).json({msg: 'Invalid Submission'});
+          res.end();
+        }
+        let submissionId = submission._id;
+        Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, subId) => {
+          if (err) {
+            res.status(404).json({msg: 'Invalid Submission'});
+            res.end();
+          }
+        })
+        res.status(200).json(submission);
+        res.end();
+      })
+    })
   })
 }

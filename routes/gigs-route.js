@@ -73,23 +73,23 @@ module.exports = (apiRouter) => {
 
   apiRouter.route('/gigs/:id/submissions')
     .post((req, res) => {
+      let readFileBody;
       req.on('data', (data) => {
         var newBody;
         req.body = JSON.parse(data);
         let newSub = new Sub(req.body);
-        let body = fs.readFile(__dirname + '/../db/testingfile.txt', (err, readFile) => {
+        fs.readFile(__dirname + '/../userContent/testingFile.txt', (err, readFile) => {
           if (err) {
             res.status(400).json({msg: 'AWS error: ' + err});
           }
-          var newBody = JSON.parse(readFile);
+          readFileBody = readFile
         })
-        console.log('NEW BODY : ', newBody)
 
         let params = {
-          Bucket: 'snap-gig-submit-bucket',
+          Bucket: 'snap-gig-gig-bucket-dump',
           Key: req.body.name,
           ACL: 'public-read-write',
-          Body: newBody
+          Body: readFileBody
         }
 
         newSub.save((err, submission) => {

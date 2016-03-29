@@ -120,6 +120,6 @@ describe('Testing users router and authentication', () => {
     mongoose.connection.db.dropDatabase(() => {
       done();
     });
-  });  
+  });
 
 });

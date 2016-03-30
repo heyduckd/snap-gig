@@ -51,7 +51,7 @@ module.exports = (apiRouter) => {
           })
         })
       })
-  })
+    })
 
   apiRouter.route('/gigs/:id')
     .get((req, res) => {

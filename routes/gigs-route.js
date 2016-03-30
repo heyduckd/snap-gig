@@ -91,7 +91,8 @@ module.exports = (apiRouter) => {
               res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
               res.end();
             }
-          })
+          });
+
           User.findByIdAndUpdate(req.user._id, {$push: {submissions: submissionId}}, (err, subId) => {
             if (err) {
               res.status(404).json({msg: 'Invalid Submission when finding user'});

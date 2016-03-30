@@ -102,7 +102,17 @@ module.exports = (apiRouter) => {
             }
           })
 
-          let docBody = fs.createReadStream(__dirname + '/../userContent/testingFile.txt');
+          // let docBody = fs.createReadStream(__dirname + '/../userContent/testingFile.txt');
+          // let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
+          // s3obj.upload({Body: docBody})
+          // .on('httpUploadProgress', function(evt) {
+          //   console.log('EVENT FROM UPLOAD', evt);
+          // })
+          // .send(function(err, data) {
+          //   console.log('ERROR AND DATA FROM UPLAD', err, data);
+          // })
+
+          let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
           let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
           s3obj.upload({Body: docBody})
           .on('httpUploadProgress', function(evt) {

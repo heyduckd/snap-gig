@@ -11,6 +11,8 @@ const AWS = require('aws-sdk');
 let zlib = require('zlib');
 let s3 = new AWS.S3();
 
+var nodeMailer = require('nodemailer');
+
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
     .get((req, res) => {
@@ -28,12 +30,28 @@ module.exports = (apiRouter) => {
         newGig.save((err, gig) => {
           if(err) throw err;
           User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
-          });
-          res.status(200).json({data: gig});
-          res.end()
+          })
+
+          var transporter = nodeMailer.createTransport('smtps://snapgignotification@gmail.com:snapsnap@smtp.gmail.com');
+          console.log('SENDING EMAIL :');
+          var mailOptions = {
+            from: '"snapgig" <snapgignotification@gmail.com>',
+            to: req.user.email,
+            subject: 'New Gig, ' + req.body.name + ' has been created',
+            text: req.user.username + ', your gig has been successfully submitted. The deadline for submissions is, ' + req.body.deadline
+          }
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              res.json({msg: 'Gig couldn\'t be posted'});
+              res.end();
+            }
+            console.log('EMAIL HAS BEEN SEND', info);
+            res.status(200).json({data: gig});
+            res.end()
+          })
         })
       })
-  })
+    })
 
   apiRouter.route('/gigs/:id')
     .get((req, res) => {
@@ -80,7 +98,6 @@ module.exports = (apiRouter) => {
         let newSub = new Sub(req.body);
 
         newSub.save((err, submission) => {
-          console.log('SUBMISSION : ', submission);
           if (err) {
             res.json({error: err});
             res.end();

@@ -32,24 +32,6 @@ module.exports = (apiRouter) => {
           if(err) throw err;
           User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
           })
-
-          // var transporter = nodeMailer.createTransport('smtps://snapgignotification@gmail.com:snapsnap@smtp.gmail.com');
-          // console.log('SENDING EMAIL :');
-          // var mailOptions = {
-          //   from: '"snapgig" <snapgignotification@gmail.com>',
-          //   to: req.user.email,
-          //   subject: 'New Gig, ' + req.body.name + ' has been created',
-          //   text: req.user.username + ', your gig has been successfully submitted. The deadline for submissions is, ' + req.body.deadline
-          // }
-          // transporter.sendMail(mailOptions, function (error, info) {
-          //   if (error) {
-          //     res.json({msg: 'Gig couldn\'t be posted'});
-          //     res.end();
-          //   }
-          //   console.log('EMAIL HAS BEEN SEND', info);
-          //   res.status(200).json({data: gig});
-          //   res.end()
-          // })
           mailer.gig(req.user.email, req.body.name, req.user.username, req.body.deadline, gig, (err, info) => {
             if (err) throw err;
             res.json({data: gig})
@@ -122,6 +104,12 @@ module.exports = (apiRouter) => {
               res.status(404).json({msg: 'Invalid Submission when finding user'});
               res.end();
             }
+          })
+
+          mailer.submission(req.user.email, submission.name, req.user.username, (err, info) => {
+            if (err) throw err;
+            res.json({data: submission})
+            res.end();
           })
 
           let docBody = fs.createReadStream(__dirname + '/../img/picture.png');

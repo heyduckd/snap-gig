@@ -32,21 +32,21 @@ mailer.gig = (userEmail, fileName, userName, deadline, gig, cb) => {
 //   res.end();
 // })
 
-mailer.submission = () => {
+mailer.submission = (userEmail, submissionName, username, cb) => {
   var transporter = nodeMailer.createTransport('smtps://snapgignotification@gmail.com:snapsnap@smtp.gmail.com');
   console.log('SENDING EMAIL :');
   var mailOptions = {
     from: '"snapgig" <snapgignotification@gmail.com>',
     to: userEmail,
-    subject: 'New Gig, ' + fileName + ' has been created',
-    text: userName + ', your gig, ' + fileName + ', has been successfully submitted. The deadline for submissions is, ' + deadline
+    subject: 'New submission, ' + submissionName + ' has been posted to ' + username,
+    text: userName + ', a submission, ' + submissionName + ', has been successfully submitted for your gig'
   }
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       return (error)
     }
     console.log('EMAIL HAS BEEN SEND', info)
-      return gig
+      return submission
   })
 }
 module.exports = mailer;

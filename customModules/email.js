@@ -22,7 +22,7 @@ mailer.gig = (userEmail, fileName, userName, deadline, gig, cb) => {
     if (error) {
       return (error)
     }
-    console.log('EMAIL HAS BEEN SEND', info);
+    // console.log('EMAIL HAS BEEN SEND', info);
       return gig
   })
 }

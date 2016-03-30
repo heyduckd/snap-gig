@@ -10,7 +10,7 @@
 // let User = require(__dirname + '/../models/users-schema');
 // let Gig = require(__dirname + '/../models/gigs-schema');
 //
-// // mongoose.connect('mongodb://localhost/testdb');
+// process.env.MONGOLAB_URI = 'mongodb://localhost/testdb'
 // require(__dirname + '/../server');
 // let userId;
 // let userToken;

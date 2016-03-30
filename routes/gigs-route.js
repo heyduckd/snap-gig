@@ -78,6 +78,7 @@ module.exports = (apiRouter) => {
         var newBody;
         req.body = JSON.parse(data);
         let newSub = new Sub(req.body);
+        let globalSubmitId;
 
         newSub.save((err, submission) => {
           console.log('SUBMISSION : ', submission);
@@ -86,6 +87,7 @@ module.exports = (apiRouter) => {
             res.end();
           }
           let submissionId = submission._id;
+          globalSubmitId = submission._id;
           Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, subId) => {
             if (err) {
               res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
@@ -111,6 +113,11 @@ module.exports = (apiRouter) => {
           })
           res.status(200).json({sub: submission});
           res.end();
+
+          s3.getSignedUrl('getObject', {Bucket: 'snap-gig-gig-bucket-dump'}, (err, url) => {
+            if (err) throw err;
+
+          })
           // Still need to implement S3 save and grab of saved URL. Also grabbing "CHUNKS" of attachment data
         })
       })

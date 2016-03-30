@@ -17,21 +17,22 @@ module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
     .get((req, res) => {
       Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
-        if(err) throw err
+        if(err) throw err;
         res.status(200).json({msg: 'getting all gigs'});
-        res.end()
-      })
+        res.end();
+      });
     })
     .post((req, res) => {
       req.on('data', (data) => {
         let userInfo = req.user._id;
-        req.body = JSON.parse(data)
-        var newGig = new Gig(req.body)
+        req.body = JSON.parse(data);
+        var newGig = new Gig(req.body);
         newGig.save((err, gig) => {
           if(err) throw err;
           User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
-          })
-
+          });
+          Gig.findByIdAndUpdate(gig._id, { $push: {owner: userInfo}}, (err, user) => {
+          });
           var transporter = nodeMailer.createTransport('smtps://snapgignotification@gmail.com:snapsnap@smtp.gmail.com');
           console.log('SENDING EMAIL :');
           var mailOptions = {
@@ -47,11 +48,11 @@ module.exports = (apiRouter) => {
             }
             console.log('EMAIL HAS BEEN SEND', info);
             res.status(200).json({data: gig});
-            res.end()
-          })
-        })
-      })
-    })
+            res.end();
+          });
+        });
+      });
+    });
 
   apiRouter.route('/gigs/:id')
     .get((req, res) => {
@@ -63,11 +64,12 @@ module.exports = (apiRouter) => {
         res.end()
       })
     })
-    .patch((req, res) => {
+    .put((req, res) => {
       let userInfo = req.user._id;
       Gig.findById(req.params.id, (err, gig) => {
         if (err) throw err;
         if (gig.owner === userInfo) {
+          console.log('gig owner is same as user info');
           gig.update(req.body, (err, data) => {
             if (err) throw err;
           })
@@ -96,6 +98,7 @@ module.exports = (apiRouter) => {
         var newBody;
         req.body = JSON.parse(data);
         let newSub = new Sub(req.body);
+        let globalSubmitId;
 
         newSub.save((err, submission) => {
           if (err) {
@@ -103,6 +106,7 @@ module.exports = (apiRouter) => {
             res.end();
           }
           let submissionId = submission._id;
+          globalSubmitId = submission._id;
           Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, subId) => {
             if (err) {
               res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
@@ -117,7 +121,8 @@ module.exports = (apiRouter) => {
             }
           })
 
-          let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
+          // let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
+          let docBody = fs.createReadStream(__dirname + submission.path);
           let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
           s3obj.upload({Body: docBody})
           .on('httpUploadProgress', function(evt) {
@@ -125,11 +130,21 @@ module.exports = (apiRouter) => {
           })
           .send(function(err, data) {
             console.log('ERROR AND DATA FROM UPLAD', err, data);
-          })
+          });
           res.status(200).json({sub: submission});
           res.end();
+
+          s3.getSignedUrl('getObject', {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name}, (err, url) => {
+            if (err) throw err;
+            Sub.findByIdAndUpdate(globalSubmitId, {$push: {files: url}}, (err, sub) => {
+              if (err) {
+                res.status(404).json({msg: 'File URL was not pushed to submission schema'});
+                res.end();
+              }
+            });
+          });
           // Still need to implement S3 save and grab of saved URL. Also grabbing "CHUNKS" of attachment data
-        })
-      })
-  })
-}
+        });
+      });
+    });
+};

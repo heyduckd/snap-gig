@@ -35,6 +35,16 @@ app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
 app.use('/admin', auth, adminRouter);
 
+// app.post('/api/userSubmission', function(req, res){
+//   upload(req, res, function(err){
+//     if(err){
+//       return res.end('Error uploading file.');
+//     }
+//     res.end('File is uploaded');
+//   });
+// });
+
+
 app.listen(3000, () => {
   console.log('Server started on 3000!');
 });

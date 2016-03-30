@@ -12,7 +12,7 @@ let Gig = require(__dirname + '/../models/gigs-schema');
 
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
-
+process.env = 'mongodb://localhost/testdb'
 require(__dirname + '/../server');
 let gigId;
 let userId;
@@ -114,7 +114,7 @@ describe('Testing /gigs/:id. ', () => {
     request('localhost:3000')
       .patch('/api/gigs/' + gigId)
       .set('Authorization', 'token ' + testToken)
-      .send({"name":"That dude is weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1})
+      .send('{"name":"That dude is weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1}')
       .end((err, res) => {
         console.log(res.body);
         expect(err).to.eql(null);

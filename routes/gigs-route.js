@@ -19,7 +19,7 @@ module.exports = (apiRouter) => {
     .get((req, res) => {
       Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
         if(err) throw err;
-        res.status(200).json({msg: 'getting all gigs'});
+        res.status(200).json({msg: gigs});
         res.end();
       });
     })
@@ -110,11 +110,11 @@ module.exports = (apiRouter) => {
             }
           })
 
-          mailer.submission(req.user.email, submission.name, req.user.username, (err, info) => {
-            if (err) throw err;
-            res.json({data: submission})
-            res.end();
-          })
+          // mailer.submission(req.user.email, submission.name, req.user.username, (err, info) => {
+          //   if (err) throw err;
+          //   res.json({data: submission})
+          //   res.end();
+          // })
 
           // let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
           let docBody = fs.createReadStream(__dirname + submission.path);

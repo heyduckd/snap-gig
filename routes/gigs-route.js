@@ -47,11 +47,12 @@ module.exports = (apiRouter) => {
         res.end()
       })
     })
-    .patch((req, res) => {
+    .put((req, res) => {
       let userInfo = req.user._id;
       Gig.findById(req.params.id, (err, gig) => {
         if (err) throw err;
         if (gig.owner === userInfo) {
+          console.log('gig owner is same as user info');
           gig.update(req.body, (err, data) => {
             if (err) throw err;
           })

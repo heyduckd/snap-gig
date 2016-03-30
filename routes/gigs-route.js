@@ -68,10 +68,10 @@ module.exports = (apiRouter) => {
       let userInfo = req.user._id;
       Gig.findById(req.params.id, (err, gig) => {
         if (err) throw err;
-        if (gig.owner === userInfo) {
-          console.log('gig owner is same as user info');
+        if (JSON.stringify(gig.owner[0]) == JSON.stringify(userInfo)) {
           gig.update(req.body, (err, data) => {
             if (err) throw err;
+            res.status(200).json({msg: 'gig updated!'})
           })
         } else {
           res.status(404).json({msg: 'You do not have permissions to patch this gig!'});
@@ -82,9 +82,9 @@ module.exports = (apiRouter) => {
       let userInfo = req.user._id;
       Gig.findById(req.params.id, (err, gig) => {
         if (err) throw err;
-        if (gig.owner === userInfo) {
+        if (JSON.stringify(gig.owner[0]) == JSON.stringify(userInfo)) {
           gig.remove((err, gig) => {
-            res.json({msg: 'gig removed!!'})
+            res.status(200).json({msg: 'gig removed!!'})
           });
         } else {
           res.json({msg: 'you dont have permission to delete this user'});

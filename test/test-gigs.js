@@ -128,23 +128,23 @@ describe('Testing /gigs/:id. ', () => {
   })
 })
 
-describe('Testing /api/gigs/:id/submissions', () => {
-  before((done) => {
-    let newGig = new Gig({name:"Wizards Beard Logo Creation",
-      category:"Graphic Design",
-      description:"Make a new logo for Wizards Beard Coffee",
-      deadline:"April 4th 2016",
-      payment_range:400})
-      newGig.save((err, gig) => {
-        console.log('this is a gig : ', gig);
-      })
-      done();
-  })
-
-  it('expect ')
-  after((done) => {
-    mongoose.connection.db.dropDatabase(() => {
-      done();
-    })
-  })
-})
+// describe('Testing /api/gigs/:id/submissions', () => {
+//   before((done) => {
+//     let newGig = new Gig({name:"Wizards Beard Logo Creation",
+//       category:"Graphic Design",
+//       description:"Make a new logo for Wizards Beard Coffee",
+//       deadline:"April 4th 2016",
+//       payment_range:400})
+//       newGig.save((err, gig) => {
+//         console.log('this is a gig : ', gig);
+//       })
+//       done();
+//   })
+//
+//   it('expect ')
+//   after((done) => {
+//     mongoose.connection.db.dropDatabase(() => {
+//       done();
+//     })
+//   })
+// })

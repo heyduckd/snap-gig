@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./lib/authentication');
+require('dotenv').load();
 
 // Routers
 let publicRouter = express.Router();

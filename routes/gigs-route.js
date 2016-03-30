@@ -12,6 +12,7 @@ let zlib = require('zlib');
 let s3 = new AWS.S3();
 
 var nodeMailer = require('nodemailer');
+var mailer = require(__dirname + '/../customModules/email');
 
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
@@ -30,29 +31,16 @@ module.exports = (apiRouter) => {
         newGig.save((err, gig) => {
           if(err) throw err;
           User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
-          });
-          Gig.findByIdAndUpdate(gig._id, { $push: {owner: userInfo}}, (err, user) => {
-          });
-          var transporter = nodeMailer.createTransport('smtps://snapgignotification@gmail.com:snapsnap@smtp.gmail.com');
-          console.log('SENDING EMAIL :');
-          var mailOptions = {
-            from: '"snapgig" <snapgignotification@gmail.com>',
-            to: req.user.email,
-            subject: 'New Gig, ' + req.body.name + ' has been created',
-            text: req.user.username + ', your gig has been successfully submitted. The deadline for submissions is, ' + req.body.deadline
-          }
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              res.json({msg: 'Gig couldn\'t be posted'});
-              res.end();
-            }
-            console.log('EMAIL HAS BEEN SEND', info);
-            res.status(200).json({data: gig});
+
+          })
+          mailer.gig(req.user.email, req.body.name, req.user.username, req.body.deadline, gig, (err, info) => {
+            if (err) throw err;
+            res.json({data: gig})
             res.end();
-          });
-        });
-      });
-    });
+          })
+        })
+      })
+    })
 
   apiRouter.route('/gigs/:id')
     .get((req, res) => {
@@ -95,6 +83,7 @@ module.exports = (apiRouter) => {
   apiRouter.route('/gigs/:id/submissions')
     .post((req, res) => {
       req.on('data', (data) => {
+        console.log('REQUEST USER AFTER HITTING ROUTE : ', req.user);
         var newBody;
         req.body = JSON.parse(data);
         let newSub = new Sub(req.body);
@@ -119,6 +108,12 @@ module.exports = (apiRouter) => {
               res.status(404).json({msg: 'Invalid Submission when finding user'});
               res.end();
             }
+          })
+
+          mailer.submission(req.user.email, submission.name, req.user.username, (err, info) => {
+            if (err) throw err;
+            res.json({data: submission})
+            res.end();
           })
 
           // let docBody = fs.createReadStream(__dirname + '/../img/picture.png');

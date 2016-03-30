@@ -86,6 +86,71 @@ module.exports = (apiRouter) => {
   });
 
   apiRouter.route('/gigs/:id/submissions')
+    // .post((req, res) => {
+    //   req.on('data', (data) => {
+    //     console.log('REQUEST USER AFTER HITTING ROUTE : ', req.user);
+    //     var newBody;
+    //     req.body = JSON.parse(data);
+    //     let newSub = new Sub(req.body);
+    //     let globalSubmitId;
+    //
+    //     newSub.save((err, submission) => {
+    //       if (err) {
+    //         res.json({error: err});
+    //         res.end();
+    //       }
+    //       let submissionId = submission._id;
+    //       let gigOwner;
+    //       let gigUserEmail;
+    //       let gigUserName;
+    //       globalSubmitId = submission._id;
+    //       Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}, $push: {owner: userInfo}}, (err, gig) => {
+    //         console.log('gig is: ', gig);
+    //         if (err) {
+    //           res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
+    //           res.end();
+    //         }
+    //       });
+    //
+    //       User.findByIdAndUpdate(req.user._id, {$push: {submissions: submissionId}}, (err, subId) => {
+    //         if (err) {
+    //           res.status(404).json({msg: 'Invalid Submission when finding user'});
+    //           res.end();
+    //         }
+    //       })
+    //
+    //       // mailer.submission(gigUserEmail, submission.name, req.user, (err, submission) => {
+    //       //   if (err) throw err;
+    //       //   res.json({data: submission})
+    //       //   res.end();
+    //       // })
+    //
+    //       // let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
+    //       let docBody = fs.createReadStream(__dirname + submission.path);
+    //       let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
+    //       s3obj.upload({Body: docBody})
+    //       .on('httpUploadProgress', function(evt) {
+    //         console.log('EVENT FROM UPLOAD', evt);
+    //       })
+    //       .send(function(err, data) {
+    //         console.log('ERROR AND DATA FROM UPLAD', err, data);
+    //       });
+    //       res.status(200).json({sub: submission});
+    //       res.end();
+    //
+    //       s3.getSignedUrl('getObject', {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name}, (err, url) => {
+    //         if (err) throw err;
+    //         Sub.findByIdAndUpdate(globalSubmitId, {$push: {files: url}}, (err, sub) => {
+    //           if (err) {
+    //             res.status(404).json({msg: 'File URL was not pushed to submission schema'});
+    //             res.end();
+    //           }
+    //         });
+    //       });
+    //       // Still need to implement S3 save and grab of saved URL. Also grabbing "CHUNKS" of attachment data
+    //     });
+    //   });
+    // });
     .post((req, res) => {
       req.on('data', (data) => {
         console.log('REQUEST USER AFTER HITTING ROUTE : ', req.user);
@@ -105,6 +170,7 @@ module.exports = (apiRouter) => {
           let gigUserName;
           globalSubmitId = submission._id;
           Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, gig) => {
+            console.log('gig is: ', gig);
             if (err) {
               res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
               res.end();

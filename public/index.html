@@ -4,7 +4,7 @@
   <title>SnapGig</title>
 </head>
 <body>
-  <form id="uploadForm" enctype="multipart/form-data" action="/api/userSubmission" method="post">
+  <form id="uploadForm" enctype="multipart/form-data" action="/api/gigs/:id/submissions" method="post">
     <input type="file" name="userSubmission">
     <input type="submit" name="submit" value="Upload File">
   </form>

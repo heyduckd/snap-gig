@@ -31,13 +31,16 @@ module.exports = (apiRouter) => {
         newGig.save((err, gig) => {
           if(err) throw err;
           User.findByIdAndUpdate(userInfo, { $push: {gigs: gig._id}}, (err, user) => {
-
+            if (err) throw err;
+          })
+          Gig.findByIdAndUpdate(gig._id, { $push: {owner: userInfo}}, (err, user) => {
+            if (err) throw err;
           })
           mailer.gig(req.user.email, req.body.name, req.user.username, req.body.deadline, gig, (err, info) => {
             if (err) throw err;
-            res.json({data: gig})
-            res.end();
           })
+          res.json({data: gig})
+          res.end();
         })
       })
     })
@@ -59,10 +62,12 @@ module.exports = (apiRouter) => {
         if (JSON.stringify(gig.owner[0]) == JSON.stringify(userInfo)) {
           gig.update(req.body, (err, data) => {
             if (err) throw err;
-            res.status(200).json({msg: 'gig updated!'})
+            res.status(200).json({msg: 'gig updated!', data: req.body})
+            res.end();
           })
         } else {
           res.status(404).json({msg: 'You do not have permissions to patch this gig!'});
+          res.end();
         };
       });
     })
@@ -75,7 +80,7 @@ module.exports = (apiRouter) => {
             res.status(200).json({msg: 'gig removed!!'})
           });
         } else {
-          res.json({msg: 'you dont have permission to delete this user'});
+          res.status(400).json({msg: 'you dont have permission to delete this user'});
         };
       });
   });

@@ -16,3 +16,11 @@ curl -X POST -H 'Authorization: token INSERT YOUR_TOKEN_HERE' --data '{"name":"l
 
 POST to /api/gigs/:id/submissions (to post a submission to a specific id)
 curl -X POST -H 'Authorization: token INSERT YOUR_TOKEN_HERE' --data '{"name":"logo", "category":"pics", "description":"need a logo for my site", "deadline": "1-26-2016", "payment_range":500}' localhost:3000/api/gigs/:SPECIFIC_ID/submissions
+
+
+
+
+
+Sam's Curl command for sending document/pictures from yesterday.
+
+curl -X POST -H 'Authorization: token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NmZiMGEyMzhmNDAyZjhhNjAwZDM1ZTMiLCJlbWFpbCI6InBAZ21haWwuY29tIiwib2NjdXBhdGlvbiI6IndlYi1kZXNpZ24iLCJpYXQiOjE0NTkyOTI3Mzl9.PMeEMHsvaI0hi7irk0Bq1IycrKy6fz0jImeIUn8KY18' --data '{"name":"Sending Picture","body":"DELETE", "category":"pics", "description":"need a logo for my site", "deadline": "1-26-2016", "payment_range":500}' localhost:3000/api/gigs/56faba21038f946e5829cbfd/submissions

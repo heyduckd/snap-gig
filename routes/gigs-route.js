@@ -8,6 +8,7 @@ const Gig = require(__dirname + '/../models/gigs-schema');
 const Sub = require(__dirname + '/../models/submissions-schema');
 const User = require(__dirname + '/../models/users-schema');
 const AWS = require('aws-sdk');
+let zlib = require('zlib');
 let s3 = new AWS.S3();
 
 module.exports = (apiRouter) => {
@@ -15,7 +16,7 @@ module.exports = (apiRouter) => {
     .get((req, res) => {
       Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
         if(err) throw err
-        res.status(200).json(gigs)
+        res.status(200).json({msg: 'getting all gigs'});
         res.end()
       })
     })
@@ -76,48 +77,64 @@ module.exports = (apiRouter) => {
       req.on('data', (data) => {
         var newBody;
         req.body = JSON.parse(data);
+        // console.log('fsys data is: ', req.body);
         let newSub = new Sub(req.body);
-        let body = fs.readFile(__dirname + '/../db/testingfile.txt', (err, readFile) => {
-          if (err) {
-            res.status(400).json({msg: 'AWS error: ' + err});
-          }
-          var newBody = JSON.parse(readFile);
-        })
-        console.log('NEW BODY : ', newBody)
-
-        let params = {
-          Bucket: 'snap-gig-submit-bucket',
-          Key: req.body.name,
-          ACL: 'public-read-write',
-          Body: newBody
-        }
 
         newSub.save((err, submission) => {
+          console.log('SUBMISSION : ', submission);
           if (err) {
-            res.status(404).json({msg: 'Invalid Submission'});
+            // res.status(404).json({msg: 'Invalid Submission when newsub saving'});
+            res.json({error: err});
             res.end();
           }
-          console.log('REQUEST PARAMS ID : ' + submission);
+          // console.log('SUBMISSION ID : ', submission._id);
           let submissionId = submission._id;
           Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, subId) => {
             if (err) {
-              res.status(404).json({msg: 'Invalid Submission'});
+              res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
               res.end();
             }
           })
           User.findByIdAndUpdate(req.user._id, {$push: {submissions: submissionId}}, (err, subId) => {
             if (err) {
-              res.status(404).json({msg: 'Invalid Submission'});
+              res.status(404).json({msg: 'Invalid Submission when finding user'});
               res.end();
             }
           })
-          s3.putObject(params, (err, data) => {
-            if (err) {
-              res.status(400).json({msg: 'Can\'t save file due to err: ' + err});
-            }
-            // console.log('this is data: ', data);
+
+          // let docBody = fs.createReadStream(__dirname + '/../userContent/testingFile.txt');
+          // let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
+          // s3obj.upload({Body: docBody})
+          // .on('httpUploadProgress', function(evt) {
+          //   console.log('EVENT FROM UPLOAD', evt);
+          // })
+          // .send(function(err, data) {
+          //   console.log('ERROR AND DATA FROM UPLAD', err, data);
+          // })
+
+          let docBody = fs.createReadStream(__dirname + '/../img/picture.png');
+          let s3obj = new AWS.S3({params: {Bucket: 'snap-gig-gig-bucket-dump', Key: req.body.name, ACL: 'public-read-write'}});
+          s3obj.upload({Body: docBody})
+          .on('httpUploadProgress', function(evt) {
+            console.log('EVENT FROM UPLOAD', evt);
           })
-          res.status(200).json(submission);
+          .send(function(err, data) {
+            console.log('ERROR AND DATA FROM UPLAD', err, data);
+          })
+
+          // let params = {
+          //   Bucket: 'snap-gig-gig-bucket-dump',
+          //   Key: req.body.name,
+          //   ACL: 'public-read-write',
+          //   Body: req.body.body
+          // }
+          // s3.putObject(params, (err, data) => {
+          //   if (err) {
+          //     res.status(400).json({msg: 'Can\'t save file due to err: ' + err});
+          //   }
+          //   // console.log('this is data: ', data);
+          // })
+          res.status(200).json({sub: submission});
           res.end();
           // Still need to implement S3 save and grab of saved URL. Also grabbing "CHUNKS" of attachment data
         })

@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./lib/authentication');
+const multer = require('multer')
 require('dotenv').load();
 
 // Routers
@@ -34,6 +35,18 @@ app.use('/public', publicRouter);
 app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
 app.use('/admin', auth, adminRouter);
+
+var upload = multer({limits : {fieldNameSize : 20}}).single('userSubmission');
+
+app.post('/api/userSubmission', function(req, res){
+  upload(req, res, function(err){
+    if(err){
+      return res.end('Error uploading file.');
+    }
+    res.end('File is uploaded');
+  });
+});
+
 
 app.listen(3000, () => {
   console.log('Server started on 3000!');

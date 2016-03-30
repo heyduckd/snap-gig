@@ -6,30 +6,18 @@ chai.use(chaiHTTP);
 let expect = chai.expect;
 let request = chai.request;
 let mongoose = require('mongoose');
-
+let bcrypt = require('bcrypt');
+let jwt = require('jsonwebtoken');
 let User = require(__dirname + '/../models/users-schema');
 let Gig = require(__dirname + '/../models/gigs-schema');
 
-let bcrypt = require('bcrypt');
-let jwt = require('jsonwebtoken');
-process.env = 'mongodb://localhost/testdb'
+process.env.MONGOLAB_URI = 'mongodb://localhost/testdb'
 require(__dirname + '/../server');
 let gigId;
 let userId;
 let testToken;
 
 describe('Testing for creating a new user, /public/user. ', () => {
-  // before((done) => {
-  //   let newGig = new Gig({name:"Wizards Beard Logo Creation",
-  //     category:"Graphic Design",
-  //     description:"Make a new logo for Wizards Beard Coffee",
-  //     deadline:"April 4th 2016",
-  //     payment_range:"$400"})
-  //     newGig.save((err, gig) => {
-  //       done();
-  //     })
-  // })
-
   it('Expect POST a new user and save to db', (done) => {
     request('localhost:3000')
     .post('/public/user')
@@ -52,6 +40,7 @@ describe('Testing logging in verification at /login/login. ', () => {
     .auth('AlienBrain', '123asd')
     .end((err, res) => {
       testToken = res.body.token;
+      // console.log(testToken);
       expect(res.status).to.eql(200);
       expect(res.body).to.have.property('token');
       done();
@@ -60,17 +49,17 @@ describe('Testing logging in verification at /login/login. ', () => {
 })
 
 describe('Testing /api/gigs rest routes. ', () => {
-  it('expect POST a new gig.', (done) => {
+  it('expect POST to create a new gig.', (done) => {
     request('localhost:3000')
     .post('/api/gigs')
-    .send('{"name":"That dude is weird graphic", "category":"Graphic Art", "description":"Create a graphic art peice that shows how weird that TA is", "deadline":"4-13-2016", "payment_range":1000}')
+    .send('{"name":"weird graphic", "category":"Graphic Art", "description":"Create a graphic art peice that shows how weird that TA is", "deadline":"4-13-2016", "payment_range":1000}')
     .set('Authorization', 'token ' + testToken)
     .end((err, res) => {
-      console.log(testToken);
       gigId = res.body.data._id;
+      expect(err).to.eql(null);
       expect(res.status).to.eql(200);
       expect(res).to.be.json;
-      expect(res.body.data.name).to.eql('That dude is weird graphic');
+      expect(res.body.data.name).to.eql('weird graphic');
       expect(res.body.data.category).to.eql('Graphic Art');
       expect(res.body.data.description).to.eql('Create a graphic art peice that shows how weird that TA is');
       expect(res.body.data.deadline).to.eql('2016-04-13T07:00:00.000Z');
@@ -79,16 +68,15 @@ describe('Testing /api/gigs rest routes. ', () => {
     })
   })
 
-  it('Expect GET to /api/gigs to all gigs, with a status of 200 and a message: getting all gigs.', (done) => {
+  it('Expect GET to /api/gigs to all gigs, with a status of 200 and a msg property with gig data.', (done) => {
     request('localhost:3000')
     .get('/api/gigs')
     .set('Authorization', 'token ' + testToken)
     .end((err, res) => {
-      console.log(res.body);
       expect(err).to.eql(null);
       expect(res).to.be.json;
       expect(res.status).to.eql(200);
-      expect(res.body.msg).to.eql('getting all gigs');
+      expect(res.body).to.have.a.property('msg');
       done();
     })
   })
@@ -101,7 +89,7 @@ describe('Testing /gigs/:id. ', () => {
       .set('Authorization', 'token ' + testToken)
       .end((err, res) => {
         expect(res.status).to.eql(200);
-        expect(res.body.data.name).to.eql('That dude is weird graphic');
+        expect(res.body.data.name).to.eql('weird graphic');
         expect(res.body.data.category).to.eql('Graphic Art');
         expect(res.body.data.description).to.eql('Create a graphic art peice that shows how weird that TA is');
         expect(res.body.data.deadline).to.eql('2016-04-13T07:00:00.000Z');
@@ -110,25 +98,53 @@ describe('Testing /gigs/:id. ', () => {
       })
   })
 
-  it('expect PATCH to edit category: monkey art, with the description "monkeys love bananas", and a payment of $1. ', (done) => {
+  it('expect PUT to edit category: monkey art, with the description "monkeys love bananas", and a payment of $1. ', (done) => {
     request('localhost:3000')
-      .patch('/api/gigs/' + gigId)
+      .put('/api/gigs/' + gigId)
       .set('Authorization', 'token ' + testToken)
-      .send('{"name":"That dude is weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1}')
+      .send({"name":"weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1})
       .end((err, res) => {
-        console.log(res.body);
         expect(err).to.eql(null);
         expect(res.status).to.eql(200);
         expect(res.body.data.category).to.eql('monkey art');
         expect(res.body.data.description).to.eql('monkeys love bananas');
         expect(res.body.data.payment_range).to.eql(1);
+        expect(res.body.msg).to.eql('gig updated!');
         done();
       })
   })
 
-  after((done) => {
-    mongoose.connection.db.dropDatabase(() => {
-      done();
-    })
+  it('expect DELETE to remove gig, with a status of 200 and a message of gig removed!!', (done) => {
+    request('localhost:3000')
+      .delete('/api/gigs/' + gigId)
+      .set('Authorization', 'token ' + testToken)
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.be.json;
+        expect(res.status).to.eql(200);
+        expect(res.body.msg).to.eql('gig removed!!');
+        done();
+      })
   })
 })
+
+// describe('Testing /api/gigs/:id/submissions', () => {
+//   before((done) => {
+//     let newGig = new Gig({name:"Wizards Beard Logo Creation",
+//       category:"Graphic Design",
+//       description:"Make a new logo for Wizards Beard Coffee",
+//       deadline:"April 4th 2016",
+//       payment_range:400})
+//       newGig.save((err, gig) => {
+//         console.log('this is a gig : ', gig);
+//       })
+//       done();
+//   })
+//
+//   it('expect ')
+//   after((done) => {
+//     mongoose.connection.db.dropDatabase(() => {
+//       done();
+//     })
+//   })
+// })

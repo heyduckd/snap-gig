@@ -95,8 +95,11 @@ module.exports = (apiRouter) => {
             res.end();
           }
           let submissionId = submission._id;
+          let gigOwner;
+          let gigUserEmail;
+          let gigUserName;
           globalSubmitId = submission._id;
-          Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, subId) => {
+          Gig.findByIdAndUpdate(req.params.id, {$push: {submissions: submissionId}}, (err, gig) => {
             if (err) {
               res.status(404).json({msg: 'Invalid Submission when finding gig by id'});
               res.end();
@@ -110,7 +113,7 @@ module.exports = (apiRouter) => {
             }
           })
 
-          // mailer.submission(req.user.email, submission.name, req.user.username, (err, info) => {
+          // mailer.submission(gigUserEmail, submission.name, req.user, (err, submission) => {
           //   if (err) throw err;
           //   res.json({data: submission})
           //   res.end();

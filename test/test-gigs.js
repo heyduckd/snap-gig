@@ -129,23 +129,34 @@ describe('Testing /gigs/:id. ', () => {
 
 describe('Testing /api/gigs/:id/submissions', () => {
   before((done) => {
-    let newGig = new Gig({"name":"Wizards Beard Logo Creation",
+    let newGig = new Gig({"name":"actor/model",
       "category":"Graphic Design",
-      "description":"Make a new logo for Wizards Beard Coffee",
-      "deadline":"April 4th 2016",
+      "description":"Make a new logo for the next magic mike",
+      "deadline":"4-5-2016",
       "payment_range":400,
       "owner": userId})
       newGig.save((err, gig) => {
+        if(err) console.log(err);
+        gigId = newGig._id
+        done();
       })
-      gigId = newGig._id
-      console.log('this is gigId reassigned : ', gigId);
-      done();
   })
-//sub: submission, msg: 'Email verification sent and file uploaded to S3'
-  it('expect POST to submission to have a status of 200, with sub property and a msg: \'Email verification sent and file uploaded to S3\'.', (done) => {
+
+  it('expect POST to submission to have a status of 200, with sub property and a msg: \'Email verification sent and file uploaded to S3\'.', function(done){
     request('localhost:3000')
-      .post('/api/gigs/' + gig)
+      .post('/api/gigs/' + gigId + '/submissions')
       .set('Authorization', 'token ' + testToken)
+      .send('{"path":"/../img/picture.png", "name":"what a beast", "body":"the next channing tatum."}')
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.be.json;
+        expect(res.body.msg).to.eql('Email verification sent and file uploaded to S3');
+        expect(res.status).to.eql(200);
+        expect(res.body.sub.name).to.eql('what a beast');
+        expect(res.body.sub.body).to.eql('the next channing tatum.');
+        expect(res.body.sub).to.have.property('path');
+        done();
+      })
   })
 
   after((done) => {

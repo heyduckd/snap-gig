@@ -18,7 +18,8 @@ let userId;
 let testToken;
 
 describe('Testing for creating a new user, /public/user. ', () => {
-  it('Expect POST a new user and save to db', (done) => {
+  it('Expect POST a new user and save to db', function (done) {
+    this.timeout(5000)
     request('localhost:3000')
     .post('/public/user')
     .send('{"username":"AlienBrain", "password":"123asd", "firstName":"Dwight", "lastName":"Shrute", "occupation":"Alien Hunter", "email":"alienbrain@gmail.com"}')

@@ -32,3 +32,8 @@ curl for gigs/:id/submissions
 
 
 curl -X POST -H 'Authorization: token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NmZjMzE0MWU2ZDk5NjA0MWU0OWQzNGQiLCJlbWFpbCI6InBvb3AyQGdtYWlsLmNvbSIsIm9jY3VwYXRpb24iOiJ3ZWItZGVzaWduIiwiaWF0IjoxNDU5Mzc1MDI5fQ.URNwRWmBi9EwtlPnc4vzt5JR_Z30a5mLpjbEoOVLDDU' --data '{"name":"Any name", "body":"New Submission with Hugo", "path":"/../img/picture.png"}' localhost:3000/api/gigs/56faba21038f946e5829cbfd/submissions
+
+curl -X POST -H 'Authorization: token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NmZjMzE0MWU2ZDk5NjA0MWU0OWQzNGQiLCJlbWFpbCI6InBvb3AyQGdtYWlsLmNvbSIsIm9jY3VwYXRpb24iOiJ3ZWItZGVzaWduIiwiaWF0IjoxNDU5Mzc1MDI5fQ.URNwRWmBi9EwtlPnc4vzt5JR_Z30a5mLpjbEoOVLDDU' --data '{"name":"5fc submission", "body":"New Submission with Hugo", "path":"/../img/picture.png"}' localhost:3000/api/gigs/56fc31a4e6d996041e49d34e/submissions
+
+
+56fc31a4e6d996041e49d34e

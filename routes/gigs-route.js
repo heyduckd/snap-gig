@@ -27,9 +27,7 @@ module.exports = (apiRouter) => {
     .get((req, res) => {
       Gig.find({}).populate('owner').populate('submissions').exec((err, gigs) => {
         if(err) throw err;
-        res.status(200).json({msg: gigs});
-
-
+        res.status(200).json(gigs);
         res.end();
       });
     })
@@ -54,8 +52,6 @@ module.exports = (apiRouter) => {
 
           tweetClient.post('statuses/update', {status: tweet}, function (error, tweets, response) {
             if (err) throw err;
-            console.log(tweets);
-            // console.log(response);
           });
 
           res.json({data: gig})
@@ -91,31 +87,22 @@ module.exports = (apiRouter) => {
           res.end();
         };
       });
-      console.log('req body winner is', req.body.winner);
 
       if (req.body.winner) {
         User.findById(req.body.winner, (err, winner) => {
-          console.log(winner);
           let winTweet = 'We have another gig winner! Congrats to ' + winner.username +' for their awesome submission.'
-          //email stuff goes here using winner.email
           mailer.winner(winner.email, winner.username, (err, info) => {
             if (err) throw err;
           })
-          //twitter stuff goes here
           tweetClient.post('statuses/update', {status: winTweet}, function (error, tweets, response) {
             if (err) throw err;
-            console.log(tweets);
-            // console.log(response);
           });
-
         })
       } else {
-        console.log('no winner entered in PUT request');
+        console.log('no winner entered in Put request');
       }
-
-
     })
-    })
+  })
     .delete((req, res) => {
       let userInfo = req.user._id;
       Gig.findById(req.params.id, (err, gig) => {
@@ -194,7 +181,7 @@ module.exports = (apiRouter) => {
             });
           });
           res.status(200).json({sub: submission, msg: 'Email verification sent and file uploaded to S3'});
-          res.end(); //originally found above s3.getSignedUrl
+          res.end();
         });
       });
     });

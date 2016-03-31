@@ -47,7 +47,7 @@ describe('Testing logging in verification at /login/login. ', () => {
     })
   })
 })
-
+let getGigId;
 describe('Testing /api/gigs rest routes. ', () => {
   it('expect POST to create a new gig.', (done) => {
     request('localhost:3000')
@@ -74,9 +74,9 @@ describe('Testing /api/gigs rest routes. ', () => {
     .set('Authorization', 'token ' + testToken)
     .end((err, res) => {
       expect(err).to.eql(null);
-      expect(res).to.be.json;
       expect(res.status).to.eql(200);
-      expect(res.body).to.have.a.property('msg');
+      expect(res.body[0].name).to.eql('weird graphic');
+      expect(res.body[0].category).to.eql('Graphic Art');
       done();
     })
   })
@@ -102,7 +102,7 @@ describe('Testing /gigs/:id. ', () => {
     request('localhost:3000')
       .put('/api/gigs/' + gigId)
       .set('Authorization', 'token ' + testToken)
-      .send({"name":"weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1})
+      .send('{"name":"weird graphic", "category":"monkey art", "description":"monkeys love bananas", "deadline":"4-13-2016", "payment_range":1}')
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res.status).to.eql(200);
@@ -160,9 +160,9 @@ describe('Testing /api/gigs/:id/submissions', () => {
       })
   })
 
-  after((done) => {
-    mongoose.connection.db.dropDatabase(() => {
-      done();
-    })
+})
+after((done) => {
+  mongoose.connection.db.dropDatabase(() => {
+    done();
   })
 })

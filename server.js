@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./lib/authentication');
+const adminAuth = require('./lib/admin-auth');
 require('dotenv').load();
 
 // Routers
@@ -33,7 +34,7 @@ app.use(bodyParser.json());
 app.use('/public', publicRouter);
 app.use('/login', loginRouter);
 app.use('/api', auth, apiRouter);
-app.use('/admin', auth, adminRouter);
+app.use('/admin', adminAuth, adminRouter);
 
 // app.post('/api/userSubmission', function(req, res){
 //   upload(req, res, function(err){

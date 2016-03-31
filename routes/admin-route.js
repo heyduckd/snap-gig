@@ -2,10 +2,8 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const http = require('http');
 const fs = require('fs');
 const jwtAuth = require(__dirname + '/../lib/authentication');
-
 const Gig = require(__dirname + '/../models/gigs-schema');
 const User = require(__dirname + '/../models/users-schema');
 
@@ -15,7 +13,6 @@ module.exports = adminRouter => {
     User.find({}).populate('Submission').populate('Gig').exec((err, users) => {
       if (err) throw err;
       res.status(200).json(users)
-      console.log('showing all users to site admin');
       res.end();
     });
   });

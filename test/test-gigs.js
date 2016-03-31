@@ -40,7 +40,6 @@ describe('Testing logging in verification at /login/login. ', () => {
     .auth('AlienBrain', '123asd')
     .end((err, res) => {
       testToken = res.body.token;
-      // console.log(testToken);
       expect(res.status).to.eql(200);
       expect(res.body).to.have.property('token');
       done();
@@ -128,23 +127,30 @@ describe('Testing /gigs/:id. ', () => {
   })
 })
 
-// describe('Testing /api/gigs/:id/submissions', () => {
-//   before((done) => {
-//     let newGig = new Gig({name:"Wizards Beard Logo Creation",
-//       category:"Graphic Design",
-//       description:"Make a new logo for Wizards Beard Coffee",
-//       deadline:"April 4th 2016",
-//       payment_range:400})
-//       newGig.save((err, gig) => {
-//         console.log('this is a gig : ', gig);
-//       })
-//       done();
-//   })
-//
-//   it('expect ')
-//   after((done) => {
-//     mongoose.connection.db.dropDatabase(() => {
-//       done();
-//     })
-//   })
-// })
+describe('Testing /api/gigs/:id/submissions', () => {
+  before((done) => {
+    let newGig = new Gig({"name":"Wizards Beard Logo Creation",
+      "category":"Graphic Design",
+      "description":"Make a new logo for Wizards Beard Coffee",
+      "deadline":"April 4th 2016",
+      "payment_range":400,
+      "owner": userId})
+      newGig.save((err, gig) => {
+      })
+      gigId = newGig._id
+      console.log('this is gigId reassigned : ', gigId);
+      done();
+  })
+//sub: submission, msg: 'Email verification sent and file uploaded to S3'
+  it('expect POST to submission to have a status of 200, with sub property and a msg: \'Email verification sent and file uploaded to S3\'.', (done) => {
+    request('localhost:3000')
+      .post('/api/gigs/' + gig)
+      .set('Authorization', 'token ' + testToken)
+  })
+
+  after((done) => {
+    mongoose.connection.db.dropDatabase(() => {
+      done();
+    })
+  })
+})

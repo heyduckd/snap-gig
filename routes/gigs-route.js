@@ -88,7 +88,6 @@ module.exports = (apiRouter) => {
   apiRouter.route('/gigs/:id/submissions')
     .post((req, res) => {
       req.on('data', (data) => {
-        console.log('REQUEST USER AFTER HITTING ROUTE : ', req.user);
         var newBody;
         req.body = JSON.parse(data);
         let newSub = new Sub(req.body);

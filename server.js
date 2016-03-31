@@ -17,6 +17,7 @@ let adminRouter = express.Router();
 
 mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/db');
 
+
 // Create User Router
 require('./routes/user-route')(publicRouter);
 

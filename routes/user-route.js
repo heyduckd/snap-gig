@@ -14,6 +14,7 @@ module.exports = (publicRouter) => {
         let newUser = new User(req.body);
         newUser.save((err, user) => {
           if (err) {
+            // console.log(err);
             res.status(404).json({msg: 'Username already exists'});
             res.end();
           } else {

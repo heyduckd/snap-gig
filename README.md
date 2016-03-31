@@ -25,8 +25,16 @@ curl -X GET -H 'Authorization: token INSERT YOUR_TOKEN_HERE' localhost:3000/api/
 
 4. To Post a New Gig
 
-curl -X POST -H 'Authorization: token YOUR_TOKEN' --data '{"name":"gig-name", "category":"gig-category", "description":"gig-description", "deadline": "xx-xx-xxxx", "payment_range":value}' localhost:3000/api/gigs
+curl -X POST -H 'Authorization: token YOUR_TOKEN' --data '{"name":"gig-name", "category":"gig-category", "description":"gig-description", "deadline": "xx-xx-xxxx", "payment_range":"value"}' localhost:3000/api/gigs
 
-5. To Post a Submission
+5. To Edit an Existing Gig
 
-curl -X POST -H 'Authorization: token YOUR_TOKEN' --data '{"name":"submission-name", "body":"submission-description", "path":"file-path-to-submission-file "}' localhost:3000/api/gigs/:GIG_ID/submissions
+curl -X PUT -H 'Authorization: token YOUR_TOKEN' --data '{"name":"edited-name", "category":"edited-category", "description":"edited-description", "deadline":"edited-deadline", "payment_range":"edited-value"}' localhost:3000/api/gigs/GIG_ID
+
+6. To Delete an Existing Gig
+
+curl -X DELETE -H 'Authorization: token YOUR_TOKEN' --data localhost:3000/api/gigs/GIG_ID
+
+7. To Post a Submission
+
+curl -X POST -H 'Authorization: token YOUR_TOKEN' --data '{"name":"submission-name", "body":"submission-description", "path":"file-path-to-submission-file"}' localhost:3000/api/gigs/:GIG_ID/submissions

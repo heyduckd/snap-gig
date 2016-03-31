@@ -89,6 +89,27 @@ module.exports = (apiRouter) => {
           res.end();
         };
       });
+
+      if (req.body.winner) {
+        User.findById(req.body.winner, (err, winner) => {
+          let winTweet = 'We have another gig winner! Congrats to ' + winner.name +' for their awesome submission.'
+          //email stuff goes here using winner.email
+          mailer.winner(winner.email, submission.name, (err, info) => {
+            if (err) throw err;
+          })
+          //twitter stuff goes here
+          tweetClient.post('statuses/update', {status: winTweet}, function (error, tweets, response) {
+            if (err) throw err;
+            console.log(tweets);
+            // console.log(response);
+          });
+
+        })
+      } else {
+        console.log('no winner entered in PUT request');
+      }
+
+
     })
     .delete((req, res) => {
       let userInfo = req.user._id;

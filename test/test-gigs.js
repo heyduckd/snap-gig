@@ -37,7 +37,7 @@ describe('Testing logging in verification at /login/login. ', () => {
   it('Expect login with correct user credentials, with status 200 and receives token', (done) => {
     request('localhost:3000')
     .post('/login/login')
-    .auth('AlienBrain', '123asd')
+    .auth('AlienBrain:123asd')
     .end((err, res) => {
       testToken = res.body.token;
       // console.log(testToken);
@@ -47,7 +47,7 @@ describe('Testing logging in verification at /login/login. ', () => {
     })
   })
 })
-
+// POSTING A NEW GIG
 describe('Testing /api/gigs rest routes. ', () => {
   it('expect POST to create a new gig.', (done) => {
     request('localhost:3000')
@@ -67,7 +67,7 @@ describe('Testing /api/gigs rest routes. ', () => {
       done();
     })
   })
-
+// GET GIGS ROUTE
   it('Expect GET to /api/gigs to all gigs, with a status of 200 and a msg property with gig data.', (done) => {
     request('localhost:3000')
     .get('/api/gigs')
@@ -80,8 +80,7 @@ describe('Testing /api/gigs rest routes. ', () => {
       done();
     })
   })
-})
-
+// GETTING A GIG BY ID
 describe('Testing /gigs/:id. ', () => {
   it('expect GET, to specific ID, using the ID of the POST.', (done) => {
     request('localhost:3000')
@@ -97,7 +96,8 @@ describe('Testing /gigs/:id. ', () => {
         done();
       })
   })
-
+})
+// PUT ROUTE ON GIG ID
   it('expect PUT to edit category: monkey art, with the description "monkeys love bananas", and a payment of $1. ', (done) => {
     request('localhost:3000')
       .put('/api/gigs/' + gigId)
@@ -113,7 +113,7 @@ describe('Testing /gigs/:id. ', () => {
         done();
       })
   })
-
+// DELETING GIG
   it('expect DELETE to remove gig, with a status of 200 and a message of gig removed!!', (done) => {
     request('localhost:3000')
       .delete('/api/gigs/' + gigId)
@@ -125,6 +125,12 @@ describe('Testing /gigs/:id. ', () => {
         expect(res.body.msg).to.eql('gig removed!!');
         done();
       })
+  })
+
+  after((done) => {
+    mongoose.connection.db.dropDatabase(() => {
+      done();
+    })
   })
 })
 
@@ -141,10 +147,3 @@ describe('Testing /gigs/:id. ', () => {
 //       done();
 //   })
 //
-//   it('expect ')
-//   after((done) => {
-//     mongoose.connection.db.dropDatabase(() => {
-//       done();
-//     })
-//   })
-// })

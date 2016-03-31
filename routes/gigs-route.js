@@ -95,9 +95,10 @@ module.exports = (apiRouter) => {
 
       if (req.body.winner) {
         User.findById(req.body.winner, (err, winner) => {
-          let winTweet = 'We have another gig winner! Congrats to ' + winner.name +' for their awesome submission.'
+          console.log(winner);
+          let winTweet = 'We have another gig winner! Congrats to ' + winner.username +' for their awesome submission.'
           //email stuff goes here using winner.email
-          mailer.winner(winner.email, submission.name, (err, info) => {
+          mailer.winner(winner.email, winner.username, (err, info) => {
             if (err) throw err;
           })
           //twitter stuff goes here

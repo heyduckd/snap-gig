@@ -12,7 +12,7 @@ let zlib = require('zlib');
 let s3 = new AWS.S3();
 
 var nodeMailer = require('nodemailer');
-var mailer = require(__dirname + '/../customModules/email');
+var mailer = require(__dirname + '/../lib/email-module');
 
 module.exports = (apiRouter) => {
   apiRouter.route('/gigs')
